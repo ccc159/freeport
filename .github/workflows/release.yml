@@ -45,7 +45,7 @@ jobs:
       - name: Upload Release Asset (macOS)
         uses: actions/upload-release-asset@v1
         env:
-          TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
@@ -55,7 +55,7 @@ jobs:
       - name: Upload Release Asset (Linux)
         uses: actions/upload-release-asset@v1
         env:
-          TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
@@ -65,7 +65,7 @@ jobs:
       - name: Upload Release Asset (Windows)
         uses: actions/upload-release-asset@v1
         env:
-          TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
@@ -92,5 +92,3 @@ jobs:
           git add deployment/brew.rb
           git commit -m "Update freeport formula to version ${VERSION}"
           git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
