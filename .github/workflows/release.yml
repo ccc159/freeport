@@ -83,12 +83,7 @@ jobs:
           sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" deployment/brew.rb
           # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
 
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout main  # Ensure you're on the correct branch
-          git pull origin main  # Pull the latest changes
-          git add deployment/brew.rb
-          git commit -m "Update freeport formula to version ${VERSION}"
-          git push origin main
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
