@@ -78,14 +78,12 @@ jobs:
       - name: Update formula file
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
-          MAC_ARTIFACT_URL=${{ steps.upload-release-asset-macos.outputs.artifact_url }}
-          LINUX_ARTIFACT_URL=${{ steps.upload-release-asset-linux.outputs.artifact_url }}
-          WINDOWS_ARTIFACT_URL=${{ steps.upload-release-asset-windows.outputs.artifact_url }}
-          SHA256_DARWIN=$(curl -sL ${MAC_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
-          SHA256_LINUX=$(curl -sL ${LINUX_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
-          SHA256_WINDOWS=$(curl -sL ${WINDOWS_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
 
-          sed -i.bak "s|url .*|url \"${MAC_ARTIFACT_URL}\"|g" Formula/freeport.rb
+          SHA256_DARWIN=$(curl -sL ${{ steps.upload-release-asset-macos.outputs.artifact_url }} | shasum -a 256 | awk '{print $1}')
+          SHA256_LINUX=$(curl -sL ${{ steps.upload-release-asset-linux.outputs.artifact_url }} | shasum -a 256 | awk '{print $1}')
+          SHA256_WINDOWS=$(curl -sL ${{ steps.upload-release-asset-windows.outputs.artifact_url }} | shasum -a 256 | awk '{print $1}')
+
+          sed -i.bak "s|url .*|url \"${{ steps.upload-release-asset-macos.outputs.artifact_url }}\"|g" Formula/freeport.rb
           sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" Formula/freeport.rb
           sed -i.bak "s|version .*|version \"${VERSION}\"|g" Formula/freeport.rb
 
