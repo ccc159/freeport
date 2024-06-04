@@ -71,3 +71,26 @@ jobs:
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           asset_content_type: application/zip
+
+      - name: Update formula file
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          SHA256_DARWIN=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
+          SHA256_LINUX=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-linux-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
+          SHA256_WINDOWS=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-windows-amd64.zip | shasum -a 256 | awk '{print $1}')
+
+          sed -i.bak "s|url .*|url \"https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz\"|g" deployment/brew.rb
+          sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" deployment/brew.rb
+          # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout main  # Ensure you're on the correct branch
+          git pull origin main  # Pull the latest changes
+          git add deployment/brew.rb
+          git commit -m "Update freeport formula to version ${VERSION}"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
