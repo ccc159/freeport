@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -43,47 +46,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - name: Upload Release Asset (macOS)
-        uses: actions/upload-release-asset@v1
+        id: upload-release-asset-macos
+        uses: actions/upload-artifact@v4
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
-          asset_name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
-          asset_content_type: application/gzip
+          path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          overwrite: true
 
       - name: Upload Release Asset (Linux)
-        uses: actions/upload-release-asset@v1
+        id: upload-release-asset-linux
+        uses: actions/upload-artifact@v4
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
-          asset_name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
-          asset_content_type: application/gzip
+          path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          overwrite: true
 
       - name: Upload Release Asset (Windows)
-        uses: actions/upload-release-asset@v1
+        id: upload-release-asset-windows
+        uses: actions/upload-artifact@v4
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
-          asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
-          asset_content_type: application/zip
-
-  update-brew:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout freeport repo
-        uses: actions/checkout@master
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+          path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
+          name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
+          overwrite: true
 
       - name: Get version from tag
         id: get_version
@@ -92,11 +82,14 @@ jobs:
       - name: Update formula file
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
-          SHA256_DARWIN=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
-          SHA256_LINUX=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-linux-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
-          SHA256_WINDOWS=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-windows-amd64.zip | shasum -a 256 | awk '{print $1}')
+          MAC_ARTIFACT_URL=${{ steps.upload-release-asset-macos.outputs.artifact_url }}
+          LINUX_ARTIFACT_URL=${{ steps.upload-release-asset-linux.outputs.artifact_url }}
+          WINDOWS_ARTIFACT_URL=${{ steps.upload-release-asset-windows.outputs.artifact_url }}
+          SHA256_DARWIN=$(curl -sL ${MAC_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
+          SHA256_LINUX=$(curl -sL ${LINUX_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
+          SHA256_WINDOWS=$(curl -sL ${WINDOWS_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
 
-          sed -i.bak "s|url .*|url \"https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz\"|g" Formula/freeport.rb
+          sed -i.bak "s|url .*|url \"${MAC_ARTIFACT_URL}\"|g" Formula/freeport.rb
           sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" Formula/freeport.rb
           sed -i.bak "s|version .*|version \"${VERSION}\"|g" Formula/freeport.rb
           # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
