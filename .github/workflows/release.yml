@@ -82,9 +82,9 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
 
-          MAC_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz"
-          LINUX_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-linux-amd64.tar.gz"
-          WINDOWS_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-windows-amd64.zip"
+          MAC_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/v${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz"
+          LINUX_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/v${VERSION}/freeport-${VERSION}-linux-amd64.tar.gz"
+          WINDOWS_ARTIFACT_URL="https://github.com/ccc159/freeport/releases/download/v${VERSION}/freeport-${VERSION}-windows-amd64.zip"
 
           SHA256_DARWIN=$(curl -sL "${MAC_ARTIFACT_URL}" | shasum -a 256 | awk '{print $1}')
           SHA256_LINUX=$(curl -sL "${LINUX_ARTIFACT_URL}" | shasum -a 256 | awk '{print $1}')
