@@ -1,0 +1,38 @@
+name: Update Homebrew Formula
+
+on:
+  release:
+    types: [published]
+    repositories:
+      - owner: ccc159
+        name: freeport
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout freeport repo
+        uses: actions/checkout@v2
+        with:
+          repository: ccc159/freeport
+          token: ${{ secrets.TOKEN }}
+
+      - name: Update formula file
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          SHA256_DARWIN=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
+          SHA256_LINUX=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-linux-amd64.tar.gz | shasum -a 256 | awk '{print $1}')
+          SHA256_WINDOWS=$(curl -sL https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-windows-amd64.zip | shasum -a 256 | awk '{print $1}')
+
+          sed -i.bak "s|url .*|url \"https://github.com/ccc159/freeport/releases/download/${VERSION}/freeport-${VERSION}-darwin-amd64.tar.gz\"|g" Formula/freeport.rb
+          sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" Formula/freeport.rb
+          # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Formula/freeport.rb
+          git commit -m "Update freeport formula to version ${VERSION}"
+          git push origin main

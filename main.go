@@ -20,6 +20,7 @@ func main() {
 		fmt.Println("Usage: freeport <port_number>")
 		os.Exit(1) // Use os.Exit(1) to exit the program with an error status
 	}
+
 	port := args[0]
 
 	// Check the operating system

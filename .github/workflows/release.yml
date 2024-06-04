@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
+
+      - name: Build binary
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          GOOS=darwin GOARCH=amd64 go build -o freeport-darwin-amd64
+          GOOS=linux GOARCH=amd64 go build -o freeport-linux-amd64
+          GOOS=windows GOARCH=amd64 go build -o freeport-windows-amd64.exe
+
+      - name: Create release assets
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          tar -czvf freeport-${VERSION}-darwin-amd64.tar.gz freeport-darwin-amd64
+          tar -czvf freeport-${VERSION}-linux-amd64.tar.gz freeport-linux-amd64
+          zip freeport-${VERSION}-windows-amd64.zip freeport-windows-amd64.exe
+
+      - name: Upload Release Asset (macOS)
+        uses: actions/upload-release-asset@v1
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Release Asset (Linux)
+        uses: actions/upload-release-asset@v1
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Release Asset (Windows)
+        uses: actions/upload-release-asset@v1
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
+          asset_content_type: application/zip
