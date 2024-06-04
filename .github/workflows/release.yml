@@ -36,12 +36,18 @@ jobs:
           tar -czvf freeport-${VERSION}-linux-amd64.tar.gz freeport-linux-amd64
           zip freeport-${VERSION}-windows-amd64.zip freeport-windows-amd64.exe
 
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
       - name: Upload Release Asset (macOS)
         uses: actions/upload-release-asset@v1
         env:
           TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
           asset_name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
           asset_content_type: application/gzip
@@ -51,7 +57,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
           asset_name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
           asset_content_type: application/gzip
@@ -61,7 +67,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           asset_content_type: application/zip
