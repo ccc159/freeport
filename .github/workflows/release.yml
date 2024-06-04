@@ -47,41 +47,44 @@ jobs:
 
       - name: Upload Release Asset (macOS)
         id: upload-release-asset-macos
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
-          name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
-          overwrite: true
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-darwin-amd64.tar.gz
+          asset_content_type: application/gzip
 
       - name: Upload Release Asset (Linux)
         id: upload-release-asset-linux
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
-          name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
-          overwrite: true
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-linux-amd64.tar.gz
+          asset_content_type: application/gzip
 
       - name: Upload Release Asset (Windows)
         id: upload-release-asset-windows
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
-          name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
-          overwrite: true
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./freeport-${{ steps.get_version.outputs.version }}-windows-amd64.tar.gz
+          asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.tar.gz
+          asset_content_type: application/zip
 
       - name: Update formula file
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
 
-          MAC_ARTIFACT_URL=${{ steps.upload-release-asset-macos.outputs.artifact-url }}
-          LINUX_ARTIFACT_URL=${{ steps.upload-release-asset-linux.outputs.artifact-url }}
-          WINDOWS_ARTIFACT_URL=${{ steps.upload-release-asset-windows.outputs.artifact-url }}
+          MAC_ARTIFACT_URL=${{ steps.upload-release-asset-macos.outputs.upload_url }}
+          LINUX_ARTIFACT_URL=${{ steps.upload-release-asset-linux.outputs.upload_url }}
+          WINDOWS_ARTIFACT_URL=${{ steps.upload-release-asset-windows.outputs.upload_url }}
 
           SHA256_DARWIN=$(curl -sL ${MAC_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
           SHA256_LINUX=$(curl -sL ${LINUX_ARTIFACT_URL} | shasum -a 256 | awk '{print $1}')
