@@ -7,12 +7,24 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"strconv"
 	"sync"
 )
 
+var version = "0.1.0"
+
 func main() {
+	// Define the version flag
+	showVersion := flag.Bool("version", false, "Print the version of the application")
+
 	// Parse the command-line arguments
 	flag.Parse()
+
+	// If the version flag is set, print the version and exit
+	if *showVersion {
+		fmt.Println("freeport version", version)
+		os.Exit(0)
+	}
 
 	// Retrieve the port number from the command-line arguments
 	args := flag.Args()
@@ -22,6 +34,12 @@ func main() {
 	}
 
 	port := args[0]
+
+	// if port is not a number, print an error message and exit
+	if _, err := strconv.Atoi(port); err != nil {
+		fmt.Println("Port must be a number")
+		os.Exit(1)
+	}
 
 	// Check the operating system
 	switch runtime.GOOS {
