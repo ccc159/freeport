@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script builds the Go binary for Linux, Windows, and macOS locally.
+
 # Name of the output binary
 BINARY_NAME="freeport"
 
