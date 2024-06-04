@@ -88,6 +88,20 @@ jobs:
           sed -i.bak "s|url .*|url \"${MAC_ARTIFACT_URL}\"|g" Formula/freeport.rb
           sed -i.bak "s|sha256 .*|sha256 \"${SHA256_DARWIN}\"|g" Formula/freeport.rb
           sed -i.bak "s|version .*|version \"${VERSION}\"|g" Formula/freeport.rb
+
+          # delete the backup file
+          rm Formula/freeport.rb.bak
+
+          # delete zip files
+          rm freeport-${VERSION}-darwin-amd64.tar.gz
+          rm freeport-${VERSION}-linux-amd64.tar.gz
+          rm freeport-${VERSION}-windows-amd64.zip
+
+          # remove the binary files
+          rm freeport-darwin-amd64
+          rm freeport-linux-amd64
+          rm freeport-windows-amd64.exe
+
           # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
 
       - name: Commit & Push changes
