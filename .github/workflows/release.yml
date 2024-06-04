@@ -75,10 +75,6 @@ jobs:
           name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           overwrite: true
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
-
       - name: Update formula file
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
