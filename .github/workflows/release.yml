@@ -80,10 +80,10 @@ jobs:
 
     steps:
       - name: Checkout freeport repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
         with:
-          repository: ccc159/freeport
-          token: ${{ secrets.TOKEN }}
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
 
       - name: Update formula file
         run: |
@@ -97,10 +97,6 @@ jobs:
           # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
 
       - name: Commit & Push changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout main
-          git add deployment/brew.rb
-          git commit -m "Update freeport formula to version ${VERSION}"
-          git push origin main
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.TOKEN }}
