@@ -100,6 +100,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git checkout main
           git add deployment/brew.rb
           git commit -m "Update freeport formula to version ${VERSION}"
           git push origin main
