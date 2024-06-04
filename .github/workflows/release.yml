@@ -72,6 +72,18 @@ jobs:
           asset_name: freeport-${{ steps.get_version.outputs.version }}-windows-amd64.zip
           asset_content_type: application/zip
 
+  update-formula:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout freeport repo
+        uses: actions/checkout@v2
+        with:
+          repository: ccc159/freeport
+          token: ${{ secrets.TOKEN }}
+
       - name: Update formula file
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
@@ -84,6 +96,9 @@ jobs:
           # Add similar lines for linux and windows if you want to include multiple OS support in the same formula
 
       - name: Commit & Push changes
-        uses: actions-js/push@master
-        with:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add deployment/brew.rb
+          git commit -m "Update freeport formula to version ${VERSION}"
+          git push origin main
