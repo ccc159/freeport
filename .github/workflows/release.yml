@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -84,6 +84,10 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
 
       - name: Update formula file
         run: |
