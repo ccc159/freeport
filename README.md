@@ -32,7 +32,7 @@ freeport <port>
 
 ## Installation
 
-### Mac - Homebrew
+### Mac - homebrew
 
 The package is not available in the official Homebrew repository yet, but you can install it from the tap:
 
@@ -40,22 +40,6 @@ The package is not available in the official Homebrew repository yet, but you ca
 brew tap ccc159/freeport https://github.com/ccc159/freeport.git
 brew install freeport
 ```
-
-If you want to uninstall it, you can run:
-
-```bash
-brew uninstall freeport
-```
-
-If you want to untap the repository, you can run:
-
-```bash
-brew untap ccc159/freeport
-```
-
-### Linux - apt
-
-It's not handled yet. But we do have a local build script that you can use to build the project locally. See the [Build locally](#build-locally) section.
 
 ### Windows - powershell
 
@@ -67,6 +51,10 @@ In the future, we can add the package to Chocolatey repository if there is a nee
 ```powershell
 powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/ccc159/freeport/main/install-freeport.ps1' -OutFile '$env:TEMP\install-freeport.ps1'; & '$env:TEMP\install-freeport.ps1'"
 ```
+
+### Linux - apt
+
+It's not handled yet. But we do have a local build script that you can use to build the project locally. See the [Build locally](#build-locally) section.
 
 ### Build locally
 
@@ -83,8 +71,7 @@ Then you'll find the binary in the `build` folder.
 
 ## Usage
 
-To kill the process that is using a specific port, run:
-`freeport <port>`
+There are only two commands available:
 
-Check the version:
-`freeport --version`
+1. main command: `freeport <port>`
+2. check version: `freeport --version`
