@@ -1,10 +1,10 @@
 class Freeport < Formula
     desc "A simple CLI tool to kill the processes that are using a specific port"
     homepage "https://github.com/ccc159/freeport"
-    url "https://github.com/ccc159/freeport/releases/download/v1.0.0/freeport-1.0.0-darwin-amd64.tar.gz"
-    sha256 "YOUR_SHA256_SUM_FOR_THIS_VERSION"
+    url "https://github.com/ccc159/freeport/releases/download/v0.1.0/freeport-0.1.0-darwin-amd64.tar.gz"
+    sha256 "8abad89d03a997ef3dfc911f413f1652995ae894294b51e4aeafca4e65796dc9"
     license "MIT"
-    version "1.0.0"
+    version "0.1.0"
   
     def install
       bin.install "freeport"
