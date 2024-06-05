@@ -52,6 +52,12 @@ In the future, we can add the package to Chocolatey repository if there is a nee
 powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/ccc159/freeport/main/install-freeport.ps1' -OutFile '$env:TEMP\install-freeport.ps1'; & '$env:TEMP\install-freeport.ps1'"
 ```
 
+You may need to allow running scripts on your system. You can do this by running the following command:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+```
+
 ### Linux - apt
 
 It's not handled yet. But we do have a local build script that you can use to build the project locally. See the [Build locally](#build-locally) section.

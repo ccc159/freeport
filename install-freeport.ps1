@@ -24,7 +24,7 @@ $env:Path += ";$installPath"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
 # Verify installation
-$freeportPath = Join-Path -Path $installPath -ChildPath "freeport-windows-amd64.exe"
+$freeportPath = Join-Path -Path $installPath -ChildPath "freeport.exe"
 if (Test-Path -Path $freeportPath) {
     Write-Host "Freeport installed successfully!"
 } else {
