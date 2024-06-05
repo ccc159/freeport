@@ -2,6 +2,8 @@
 
 A simple CLI tool to kill the processes that are using a specific port.
 
+![demo](./demo.jpg)
+
 ## Intention
 
 Have you often encountered the following error message when you try to start a server on a specific port? This happens a lot to a web developer when a dev server died unexpectedly and the port is still in use.
